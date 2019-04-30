@@ -1,0 +1,123 @@
+{
+  "className": "ch.dk.junit5exploration.bdd.SlowServiceJGivenTest",
+  "name": "Slow Service J Given",
+  "scenarios": [
+    {
+      "className": "ch.dk.junit5exploration.bdd.SlowServiceJGivenTest",
+      "testMethodName": "my_scenario",
+      "description": "my scenario",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "first number",
+              "words": [
+                {
+                  "value": "Given",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "first number"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 32089822
+            },
+            {
+              "name": "first number",
+              "words": [
+                {
+                  "value": "first number"
+                },
+                {
+                  "value": "12",
+                  "argumentInfo": {
+                    "argumentName": "firstNumber",
+                    "formattedValue": "12"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 9320219
+            },
+            {
+              "name": "given stage second number",
+              "words": [
+                {
+                  "value": "given stage second number"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 364175
+            },
+            {
+              "name": "second number",
+              "words": [
+                {
+                  "value": "second number"
+                },
+                {
+                  "value": "10",
+                  "argumentInfo": {
+                    "argumentName": "secondNumber",
+                    "formattedValue": "10"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 497976
+            },
+            {
+              "name": "sum",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "sum"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1000298065
+            },
+            {
+              "name": "should result",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "should result"
+                },
+                {
+                  "value": "22",
+                  "argumentInfo": {
+                    "argumentName": "expectedResult",
+                    "formattedValue": "22"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 158637295
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "status": "SUCCESS",
+          "success": true,
+          "durationInNanos": 1226730430
+        }
+      ],
+      "durationInNanos": 1226730430,
+      "executionStatus": "SUCCESS"
+    }
+  ],
+  "tagMap": {}
+}

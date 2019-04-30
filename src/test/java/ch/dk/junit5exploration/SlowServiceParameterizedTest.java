@@ -1,5 +1,7 @@
 package ch.dk.junit5exploration;
 
+import io.qameta.allure.Lead;
+import io.qameta.allure.Step;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -17,8 +19,14 @@ class SlowServiceParameterizedTest {
     })
     public void sum(Integer a, Integer b, Integer expected) {
         System.out.println("SlowServiceParameterizedTest started");
-        Integer sum = testee.sum(a, b);
+        Integer sum = getSum(a, b);
         assertThat(sum).isEqualTo(expected);
         System.out.println("SlowServiceParameterizedTest finished");
+    }
+
+    @Step("calculating {a} + {b}.")
+    @Lead("ATeam")
+    private Integer getSum(Integer a, Integer b) {
+        return testee.sum(a, b);
     }
 }

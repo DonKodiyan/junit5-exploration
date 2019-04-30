@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>01 Javascript</title>
+
+  <link rel="icon" href="../img/zuehlke_logo.jpg">
+  <link rel="stylesheet" href="../css/reveal.css">
+  <link rel="stylesheet" href="../css/theme/zuehlke.css">
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="../lib/css/atom-one-dark.css">
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? '../css/print/pdf.css'
+        : '../css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section>
+      <section>
+        <img src="img/junit5-logo.png"/>
+        <p>The next generation of JUnit</p>
+        <aside class="notes">
+          <ul>
+            <li>Show of hands...</li>
+            <li>Initially started as crowdfunding campaign for JUnit Lambda</li>
+            <li>Started developing in 2015</li>
+            <li>Agenda: why JUnit 5, what changed, how to migrate?</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>Why JUnit 5?</h1>
+      </section>
+      <section>
+        <h2>Issues with JUnit 4</h2>
+        <p>No official tool integration API</p>
+        <aside class="notes">
+          <ul>
+            <li>Was not initially designed for tool integration</li>
+            <li>Tools somehow made it work</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>Issues with JUnit 4</h2>
+        <p>Extension mechanism</p>
+        <ul>
+          <li>Runner: powerful but not composable</li>
+          <li>Rule: composable but not powerful</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Issues with JUnit 4</h2>
+        <p>High overhead</p>
+        <pre><code class="hljs java">
+@Test
+public void testExceptionMessage() {
+    try {
+        new ArrayList&lt;Object&gt;().get(0);
+        fail();
+    } catch (IndexOutOfBoundsException e) {
+        assertThat(e.getMessage(), is("Index: 0, Size: 0"));
+    }
+}
+                </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>The little things, high overhead</li>
+            <li>For example error handling</li>
+            <li>Other example are parameterized tests</li>
+          </ul>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>So, what's new?</h1>
+      </section>
+      <section>
+        <h2>New Architecture</h2>
+        <p>Jupiter + Vintage + Platform = JUnit 5</p>
+      </section>
+      <section>
+        <h2>New Architecture</h2>
+        <img height="500px" src="img/junit5-architecture-1.png"/>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h2>Extensions</h2>
+        <p>Powerful and composable</p>
+      </section>
+      <section>
+        <h2>How do I implement extensions?</h2>
+        <p>Example extension to skip a test</p>
+                <pre><code class="hljs java">
+public class SkipExtension implements ExecutionCondition {
+
+  @Override
+  public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext e) {
+    return ConditionEvaluationResult.disabled("Skipped");
+  }
+}
+                </code></pre>
+      </section>
+      <section>
+        <h2>More Extensions</h2>
+        <p>
+        AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback,
+        ExecutionCondition, ParameterResolver, TestExecutionExceptionHandler, ...
+        </p>
+        <a href="https://junit.org/junit5/docs/current/api/org/junit/jupiter/api/extension/Extension.html">More
+          Extensions...</a>
+      </section>
+      <section>
+        <h2>Okey, cool... how do I apply extensions?</h2>
+        <p>Easy!</p>
+        <pre><code class="hljs java">
+@Test
+@ExtendWith(SkipExtension.class)
+public void skipMe() {
+  Assertions.fail();
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>Applying them using annotations</h2>
+        <pre><code class="hljs java">
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@ExtendWith(SkipExtension.class)
+public @interface Skip {}
+
+@Test
+@Skip
+public void skipMeToo() {
+  Assertions.fail();
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>The configurable way</h2>
+        <p>Simply list your extensions in this file:</p>
+        <pre><code class="hljs AsciiDoc">src/test/resources/META-INF/services/org.junit.jupiter.api.extension.Extension</code></pre>
+        <p>How the content could look like:</p>
+        <pre><code class="hljs AsciiDoc">ch.dk.junit5exploration.SkipExtension
+ch.dk.junit5exploration.OtherCustomExtension</code></pre>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>New assertions!</h1>
+      </section>
+      <section>
+        <h2>Personal favourite: assertThrows</h2>
+        <pre><code class="hljs java">
+@Test
+public void shouldThrowException() {
+  IllegalStateException illegalStateException = assertThrows(IllegalStateException.class,
+      () -> {
+        throw new IllegalStateException();
+      });
+  assertThat(illegalStateException.getMessage()).isNull();
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>assertTimeout</h2>
+        <pre><code class="hljs java">
+@Test
+public void shouldReturnCorrectMessageBeforeTimeoutIsExceeded() {
+  final String message = assertTimeout(Duration.ofMillis(50), () -> {
+    Thread.sleep(20);
+    return "Hello World!";
+  });
+  assertThat(message).isEqualTo("Hello World!");
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>assertAll</h2>
+        <pre><code class="hljs java">
+@Test
+public void shouldDoMultipleAsserts(){
+  String foo = "bar";
+  assertAll(
+      () -> assertThat(foo).isNotNull(),
+      () -> assertThat(foo).isNotEmpty(),
+      () -> assertThat(foo).isEqualTo("bar")
+  );
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>assertEquals</h2>
+        <p>Small refactorings</p>
+        <pre><code class="hljs java">
+@Test
+public void shouldBeEquals(){
+  assertEquals("Now the message comes first", "expected", "actual");
+}
+        </code></pre>
+        <p>Personal preference: Using AssertJ instead</p>
+        <pre><code class="hljs java">
+@Test
+public void shouldBeEqualsAssertJ(){
+  assertThat("actual").as("Message").isEqualTo("expected");
+}
+        </code></pre>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>Parameterized tests</h1>
+      </section>
+      <section>
+        <h2>@ParameterizedTest</h2>
+      </section>
+      <section>
+        <h2>DynamicTest</h2>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>More descriptive and readable than ever</h1>
+      </section>
+      <section>
+        <h2>@Nested</h2>
+      </section>
+      <section>
+        <h2>UTF-32</h2>
+      </section>
+    </section>
+    <section>
+      <section>
+        <h1>How to migrate?</h1>
+      </section>
+      <section>
+        <h2>Maven</h2>
+        <pre><code class="hljs xml">
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>${junit.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+    <version>${junit.jupiter.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-params</artifactId>
+    <version>${junit.jupiter.version}</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.vintage</groupId>
+    <artifactId>junit-vintage-engine</artifactId>
+    <version>${junit.jupiter.version}</version>
+    <scope>test</scope>
+</dependency>
+        </code></pre>
+      </section>
+    </section>
+    <section class="deck-slide">
+      <h1>Questions?</h1>
+    </section>
+  </div>
+</div>
+
+<script src="./lib/js/head.min.js"></script>
+<script src="./js/reveal.js"></script>
+
+<script>
+  // More info https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    history: true,
+
+    // More info https://github.com/hakimel/reveal.js#dependencies
+    dependencies: [
+      {src: '../plugin/markdown/marked.js'},
+      {src: '../plugin/markdown/markdown.js'},
+      {src: '../plugin/notes/notes.js', async: true},
+      {
+        src: '../plugin/highlight/highlight.js', async: true, callback: function () {
+          hljs.initHighlightingOnLoad();
+        }
+      }
+    ]
+  });
+</script>
+</body>
+</html>
