@@ -16,9 +16,7 @@ class SlowServiceDynamicTest {
         return IntStream.range(0, 100)
                 .mapToObj(i -> DynamicTest.dynamicTest("Test " + 1,
                         () -> {
-                            System.out.println("SlowServiceDynamicTest started");
                             assertThat(testee.sum(i, i)).isEqualTo(i * 2);
-                            System.out.println("SlowServiceDynamicTest finished");
                         }));
     }
 }

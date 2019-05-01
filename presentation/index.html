@@ -5,7 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>01 Javascript</title>
+  <title>JUnit 5: Next generation of JUnit</title>
 
   <link rel="icon" href="../img/zuehlke_logo.jpg">
   <link rel="stylesheet" href="../css/reveal.css">
@@ -33,7 +33,7 @@
         <p>The next generation of JUnit</p>
         <aside class="notes">
           <ul>
-            <li>Show of hands...</li>
+            <li>Warning: Slightly opinionated talk</li>
             <li>Initially started as crowdfunding campaign for JUnit Lambda</li>
             <li>Started developing in 2015</li>
             <li>Agenda: why JUnit 5, what changed, how to migrate?</li>
@@ -103,6 +103,11 @@ public void testExceptionMessage() {
       <section>
         <h2>Extensions</h2>
         <p>Powerful and composable</p>
+        <aside class="notes">
+          <ul>
+            <li>Removed Runner and Rules in favour of Extensions</li>
+          </ul>
+        </aside>
       </section>
       <section>
         <h2>How do I implement extensions?</h2>
@@ -229,30 +234,136 @@ public void shouldBeEqualsAssertJ(){
       </section>
       <section>
         <h2>@ParameterizedTest</h2>
+        <pre><code class="hljs java">@ParameterizedTest
+@CsvSource({
+        "1,2,3",
+        "4,2,6",
+        "8,-1,7",
+        "-4,8,4"
+})
+public void sum(Integer a, Integer b, Integer expected) {
+    Integer sum = getSum(a, b);
+    assertThat(sum).isEqualTo(expected);
+}</code></pre>
+      </section>
+      <section>
+        <h2>Different types of sources</h2>
+        <pre><code class="hljs java">
+@ValueSource(ints = { 3, 6, 15})
+@EnumSource(MyEnum.class)
+@MethodSource("numberSource")
+@CsvSource({
+        "1,2",
+        "2,4",
+        "3,6"
+})
+@CsvFileSource(resources = "/source.csv")
+
+
+private static Stream numberSource() {
+    return Stream.of(
+            Arguments.of(1),
+            Arguments.of(2),
+            Arguments.of(3)
+    );
+}
+        </code></pre>
+        <aside class="notes">
+          <ul>
+            <li>Parameterized tests can be annotated with the following annotations</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2>ArgumentConverter</h2>
+        <pre><code>
+@ValueSource(strings = { "2018-01-01", "2018-01-31" })
+void test(LocalDate localDate) {
+...
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2>Custom ArgumentConverter</h2>
+        <pre><code class="hljs java">@Test
+@ParameterizedTest
+@CsvSource({
+        "15, F"
+})
+void convertWithCustomHexConverter(int expected,
+    @ConvertWith(HexConverter.class) int actual) {...}
+
+class HexConverter implements ArgumentConverter {
+    @Override
+    public Object convert(Object source, ParameterContext context)
+            throws ArgumentConversionException {
+        try {
+            return Integer.parseInt((String) source, 16);
+        } catch (NumberFormatException e) {
+            throw new ArgumentConversionException("Cannot convert hex value", e);
+        }
+    }
+}</code></pre>
       </section>
       <section>
         <h2>DynamicTest</h2>
+        <pre><code class="hljs java">@TestFactory
+public Stream&lt;DynamicTest&gt; dynamicTestsFromStreamInJava8() {
+    return IntStream.range(0, 100)
+            .mapToObj(i -> DynamicTest.dynamicTest("Test " + 1,
+                    () -> {
+                        assertThat(testee.sum(i, i)).isEqualTo(i * 2);
+                    }));
+}</code></pre>
+        <aside class="notes">
+          <ul>
+            <li>DynamicTests similar to parameterized test</li>
+            <li>Create multiple tests dynamically</li>
+          </ul>
+        </aside>
       </section>
     </section>
     <section>
       <section>
-        <h1>More descriptive and readable than ever</h1>
+        <h1>More descriptive and readable tests</h1>
       </section>
       <section>
-        <h2>@Nested</h2>
+        <h2>@Nested & @DisplayName</h2>
+        <pre><code>@DisplayName("JUnit 5 Nested Example")
+class JUnit5NestedExampleTest {
+
+    @Nested
+    @DisplayName("Tests for the method A")
+    class A {
+        @Test
+        @DisplayName("Example test for method A")
+        void sampleTestForMethodA() {
+            System.out.println("Example test for method A");
+        }
+    }
+}
+        </code></pre>
       </section>
       <section>
         <h2>UTF-32</h2>
+        <p>More characters to express your feelings!</p>
+        <pre><code class="hljs java">@Test
+@DisplayName("\uD83D\uDCA9\uD83D\uDCA9\uD83D\uDCA9\uD83D\uDCA9")
+void someCrappyTest() {...}</code></pre>
       </section>
     </section>
     <section>
       <section>
         <h1>How to migrate?</h1>
+        <aside class="notes">
+          <ul>
+            <li>Possible to migrate slowly</li>
+          </ul>
+        </aside>
       </section>
       <section>
         <h2>Maven</h2>
-        <pre><code class="hljs xml">
-<dependency>
+        <pre><code class="hljs xml"><dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
     <version>${junit.version}</version>
@@ -275,9 +386,109 @@ public void shouldBeEqualsAssertJ(){
     <artifactId>junit-vintage-engine</artifactId>
     <version>${junit.jupiter.version}</version>
     <scope>test</scope>
-</dependency>
-        </code></pre>
+</dependency></code></pre>
       </section>
+      <section>
+        <h2>Renamed annotations</h2>
+        <table>
+          <thead>
+          <tr>
+            <th>JUnit 4</th>
+            <th>JUnit 5</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><code class="hljs light java">@Before</code></td>
+            <td><code class="hljs light java">@BeforeEach</code></td>
+          </tr>
+          <tr>
+            <td><code class="hljs light java">@After</code></td>
+            <td><code class="hljs light java">@AfterEach</code></td>
+          </tr>
+          <tr>
+            <td><code class="hljs light java">@BeforeClass</code></td>
+            <td><code class="hljs light java">@BeforeAll</code></td>
+          </tr>
+          <tr>
+            <td><code class="hljs light java">@AfterClass</code></td>
+            <td><code class="hljs light java">@AfterAll</code></td>
+          </tr>
+          <tr>
+            <td><code class="hljs light java">@Ignore</code></td>
+            <td><code class="hljs light java">@Disable</code></td>
+          </tr>
+          </tbody>
+        </table>
+        <p>Intellij for the rescue!</p>
+      </section>
+      <section>
+        <h2>Exceptions</h2>
+        <pre><code class="hljs java">@Test(expected = IllegalArgumentException.class)
+public void shouldThrowAnException() {
+    throw new IllegalArgumentException();
+}</code></pre>
+        <i class="icon">&darr;</i>
+        <pre><code class="hljs java">@Test
+void shouldThrowAnException() {
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        throw new IllegalArgumentException();
+    });
+}</code></pre>
+      </section>
+      <section>
+        <h2>Tags</h2>
+        <pre><code class="hljs java">@Category(IntegrationTest.class)
+public class JUnit4CategoryTest {
+
+}</code></pre>
+        <i class="icon">&darr;</i>
+        <pre><code class="hljs java">@Tag("integration")
+class JUnit5TagTest {
+
+}</code></pre>
+      </section>
+      <section>
+        <h2>Spring Extension</h2>
+        <pre><code class="hljs java">@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringTestConfiguration.class)
+public class JUnit4SpringTest {
+...
+}</code></pre>
+        <i class="icon">&darr;</i>
+        <pre><code class="hljs java">@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = SpringTestConfiguration.class)
+class JUnit5SpringTest {
+...
+}</code></pre>
+      </section>
+      <section>
+      <h2>Mockito Extension</h2>
+      <pre><code class="hljs java">@RunWith(MockitoJUnitRunner.class)
+public class JUnit4MockitoTest {
+...
+}</code></pre>
+      <i class="icon">&darr;</i>
+      <pre><code class="hljs java">@ExtendWith(MockitoExtension.class)
+class JUnit5MockitoTest {
+        ...
+}}</code></pre>
+    </section>
+    <section>
+      <h2>Rule migration support</h2>
+      <pre><code class="hljs xml"><dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-migrationsupport</artifactId>
+    <version>5.2.0</version>
+</dependency></code></pre>
+      </section>
+    <section>
+    <h2>Parallel execution</h2>
+    <pre><code class="hljs ascii">src/test/resources/junit-platform.properties</code></pre>
+    <pre><code class="hljs ascii">junit.jupiter.execution.parallel.enabled=true
+junit.jupiter.execution.parallel.mode.default=concurrent
+junit.jupiter.execution.parallel.config.strategy=dynamic</code></pre>
+    </section>
     </section>
     <section class="deck-slide">
       <h1>Questions?</h1>

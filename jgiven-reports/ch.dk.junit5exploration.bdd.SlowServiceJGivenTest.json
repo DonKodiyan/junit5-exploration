@@ -26,7 +26,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 32089822
+              "durationInNanos": 55500561
             },
             {
               "name": "first number",
@@ -43,7 +43,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 9320219
+              "durationInNanos": 16881967
             },
             {
               "name": "given stage second number",
@@ -53,7 +53,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 364175
+              "durationInNanos": 581582
             },
             {
               "name": "second number",
@@ -70,7 +70,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 497976
+              "durationInNanos": 766061
             },
             {
               "name": "sum",
@@ -84,7 +84,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 1000298065
+              "durationInNanos": 1001030382
             },
             {
               "name": "should result",
@@ -105,17 +105,17 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 158637295
+              "durationInNanos": 648339
             }
           ],
           "explicitArguments": [],
           "derivedArguments": [],
           "status": "SUCCESS",
           "success": true,
-          "durationInNanos": 1226730430
+          "durationInNanos": 1108878157
         }
       ],
-      "durationInNanos": 1226730430,
+      "durationInNanos": 1108878157,
       "executionStatus": "SUCCESS"
     }
   ],

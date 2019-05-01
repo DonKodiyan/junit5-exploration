@@ -18,10 +18,8 @@ class SlowServiceParameterizedTest {
             "-4,8,4"
     })
     public void sum(Integer a, Integer b, Integer expected) {
-        System.out.println("SlowServiceParameterizedTest started");
         Integer sum = getSum(a, b);
         assertThat(sum).isEqualTo(expected);
-        System.out.println("SlowServiceParameterizedTest finished");
     }
 
     @Step("calculating {a} + {b}.")

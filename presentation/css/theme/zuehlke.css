@@ -324,7 +324,8 @@ body {
 .reveal h3,
 .reveal h4,
 .reveal h5,
-.reveal h6 {
+.reveal h6,
+.reveal .icon {
   margin: 0 0 20px 0;
   color: #ff820a;
   font-family: "Zuehlke", sans-serif;
@@ -350,6 +351,10 @@ body {
 .reveal h1 {
   text-shadow: none; }
 
+.reveal .icon{
+  margin: 0;
+  font-style: normal;
+}
 /*********************************************
  * OTHER
  *********************************************/
