@@ -16,4 +16,14 @@ class JUnit5NestedExampleTest {
       System.out.println("Example test for method A");
     }
   }
+
+  @Nested
+  @DisplayName("Tests for the method B")
+  class B {
+    @Test
+    @DisplayName("Example test for method B")
+    void sampleTestForMethodB() {
+      System.out.println("Example test for method B");
+    }
+  }
 }
