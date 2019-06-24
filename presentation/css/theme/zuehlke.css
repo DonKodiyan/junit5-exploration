@@ -106,7 +106,7 @@
       margin-top: 0; }
   .reveal .slides section pre {
     box-shadow: none !important;
-    font-size: 0.5em !important;
+    font-size: 0.7em !important;
     word-wrap: normal !important; }
     .reveal .slides section pre code {
       padding: 0.4em !important;
@@ -324,8 +324,7 @@ body {
 .reveal h3,
 .reveal h4,
 .reveal h5,
-.reveal h6,
-.reveal .icon {
+.reveal h6 {
   margin: 0 0 20px 0;
   color: #ff820a;
   font-family: "Zuehlke", sans-serif;
@@ -351,10 +350,6 @@ body {
 .reveal h1 {
   text-shadow: none; }
 
-.reveal .icon{
-  margin: 0;
-  font-style: normal;
-}
 /*********************************************
  * OTHER
  *********************************************/
@@ -428,7 +423,7 @@ body {
 .reveal pre {
   display: block;
   position: relative;
-  width: 100%;
+  width: 90%;
   margin: 20px auto;
   text-align: left;
   font-size: 0.55em;
@@ -551,17 +546,7 @@ body {
 
 .reveal .grid {
   display: grid;
-  grid-template-columns: auto auto;
-}
+  grid-template-columns: auto auto; }
 
 .reveal .slides section .grid li {
-  margin-top: 0.8em;
-}
-
-.reveal .c1 {
-  color: #80cbff;
-}
-
-.reveal .c2 {
-  color: #2c47ff;
-}
+  margin-top: 0.8em; }
